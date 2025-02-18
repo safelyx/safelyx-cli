@@ -14,11 +14,11 @@ jobs:
         arch: [x86_64, aarch64]
         include:
           - os: ubuntu-latest
-            platform: linux
+            platform: unknown-linux-gnu
           - os: windows-latest
-            platform: windows
+            platform: pc-windows-msvc
           - os: macos-latest
-            platform: darwin
+            platform: apple-darwin
 
     runs-on: ${{ matrix.os }}
     steps:

@@ -28,10 +28,12 @@ jobs:
           deno-version-file: .dvmrc
 
       - name: Compile binary
+        if: ${{ !(matrix.os == 'windows-latest' && matrix.arch == 'aarch64') }}
         run: |
           deno compile --target ${{ matrix.arch }}-${{ matrix.platform }} --allow-net=safelyx.com --output=safelyx-${{ matrix.platform }}-${{ matrix.arch }} main.ts
 
       - name: Generate SHA256
+        if: ${{ !(matrix.os == 'windows-latest' && matrix.arch == 'aarch64') }}
         run: |
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
             certutil -hashfile safelyx-${{ matrix.platform }}-${{ matrix.arch }}.exe SHA256 > safelyx-${{ matrix.platform }}-${{ matrix.arch }}.sha256
@@ -41,6 +43,7 @@ jobs:
         shell: bash
 
       - name: Upload files
+        if: ${{ !(matrix.os == 'windows-latest' && matrix.arch == 'aarch64') }}
         uses: actions/upload-artifact@v4
         with:
           name: safelyx-${{ matrix.platform }}-${{ matrix.arch }}
@@ -49,7 +52,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload Release Assets
-        if: github.event_name == 'release'
+        if: ${{ github.event_name == 'release' && !(matrix.os == 'windows-latest' && matrix.arch == 'aarch64') }}
         uses: softprops/action-gh-release@v1
         with:
           files: |

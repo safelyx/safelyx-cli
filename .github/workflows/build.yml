@@ -1,0 +1,56 @@
+name: Build
+
+on:
+  push:
+    branches: ['*']
+  release:
+    types: [created]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        arch: [x86_64, aarch64]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: windows-latest
+            platform: windows
+          - os: macos-latest
+            platform: darwin
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version-file: .dvmrc
+
+      - name: Compile binary
+        run: |
+          deno compile --target ${{ matrix.arch }}-${{ matrix.platform }} --allow-net=safelyx.com --output=safelyx-${{ matrix.platform }}-${{ matrix.arch }} main.ts
+
+      - name: Generate SHA256
+        run: |
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            certutil -hashfile safelyx-${{ matrix.platform }}-${{ matrix.arch }}.exe SHA256 > safelyx-${{ matrix.platform }}-${{ matrix.arch }}.sha256
+          else
+            shasum -a 256 safelyx-${{ matrix.platform }}-${{ matrix.arch }} > safelyx-${{ matrix.platform }}-${{ matrix.arch }}.sha256
+          fi
+        shell: bash
+
+      - name: Upload files
+        uses: actions/upload-artifact@v4
+        with:
+          name: safelyx-${{ matrix.platform }}-${{ matrix.arch }}
+          path: |
+            safelyx-${{ matrix.platform }}-${{ matrix.arch }}*
+          if-no-files-found: error
+
+      - name: Upload Release Assets
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            safelyx-${{ matrix.platform }}-${{ matrix.arch }}*

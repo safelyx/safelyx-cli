@@ -18,7 +18,7 @@ You can find the API documentation at https://safelyx.com/safe-api.
 
 It has a command per API endpoint.
 
-Download the binary from [the releases page](https://github.com/safelyx/safelyx-cli/releases) that's appropriate for your platform and architecture. Make sure the file is executable and is in your `PATH`.
+Download the binary from [the releases page](https://github.com/safelyx/safelyx-cli/releases) that's appropriate for your platform and architecture. Make sure the file is executable and is in your `PATH` (on macOS, you may also need to run `chmod +x safelyx && xattr -dr com.apple.quarantine safelyx` because the binary is not code signed).
 
 ```bash
 safelyx check https://example.com

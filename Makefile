@@ -10,4 +10,4 @@ test:
 
 .PHONY: build
 build:
-	deno compile --allow-net=safelyx.com --output=safelyx main.ts
+	deno compile --allow-net=safelyx.com --allow-read=.env --allow-env=SAFELYX_KEY_CODE --output=safelyx main.ts

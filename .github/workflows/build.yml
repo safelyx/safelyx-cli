@@ -33,7 +33,7 @@ jobs:
       - name: Compile binary
         if: ${{ !(matrix.os == 'windows-latest' && matrix.arch == 'aarch64') }}
         run: |
-          deno compile --target ${{ matrix.arch }}-${{ matrix.platform }} --allow-net=safelyx.com --output=safelyx-${{ matrix.platform }}-${{ matrix.arch }} main.ts
+          deno compile --target ${{ matrix.arch }}-${{ matrix.platform }} --allow-net=safelyx.com --allow-read=.env --allow-env=SAFELYX_KEY_CODE --output=safelyx-${{ matrix.platform }}-${{ matrix.arch }} main.ts
 
       - name: Generate SHA256
         if: ${{ !(matrix.os == 'windows-latest' && matrix.arch == 'aarch64') }}
